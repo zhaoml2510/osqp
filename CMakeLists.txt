@@ -31,14 +31,14 @@ endif()
 # conda, this would mean specifying: -DMKL_DIR=/path/to/oneapi/mkl/latest/lib/cmake/mkl
 # -DMKL_ROOT=/path/to/oneapi/mkl/latest
 # ----------------------------------------------
-if(NOT DEFINED ENV{MKL_ROOT})
-  if(DEFINED ENV{CONDA_PREFIX})
-    message(STATUS "Detected Conda environment - setting MKL_ROOT to $CONDA_PREFIX")
-    set(MKL_ROOT $ENV{CONDA_PREFIX})
-    include_directories("$ENV{CONDA_PREFIX}/include")
-    link_directories("$ENV{CONDA_PREFIX}/lib")
-  endif()
-endif()
+#if(NOT DEFINED ENV{MKL_ROOT})
+#  if(DEFINED ENV{CONDA_PREFIX})
+#    message(STATUS "Detected Conda environment - setting MKL_ROOT to $CONDA_PREFIX")
+#    set(MKL_ROOT $ENV{CONDA_PREFIX})
+#    include_directories("$ENV{CONDA_PREFIX}/include")
+#    link_directories("$ENV{CONDA_PREFIX}/lib")
+#  endif()
+#endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
