@@ -141,8 +141,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/osqp_configure.h.in
 # CUDA support
 # ----------------------------------------------
 if(ALGEBRA_CUDA)
-  enable_language(CUDA)
-  find_package(CUDA)
+  #enable_language(CUDA)
+  find_package(CUDA REQUIRED)
 
   # cublas and cusparse headers
   include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
