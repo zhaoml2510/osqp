@@ -199,6 +199,7 @@ endif(NOT MSVC)
 # OSQPLIB
 # ----------------------------------------------
 add_library(OSQPLIB OBJECT "")
+set_property(TARGET OSQPLIB PROPERTY CUDA_STANDARD 11)
 
 add_subdirectory(include)
 add_subdirectory(src)
