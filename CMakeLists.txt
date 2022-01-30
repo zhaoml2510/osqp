@@ -4,7 +4,7 @@ project(osqp)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-set_property(GLOBAL CMAKE_CUDA_STANDARD 11)
+set(CMAKE_CUDA_STANDARD 11)
 
 # Detect operating system
 # ----------------------------------------------
