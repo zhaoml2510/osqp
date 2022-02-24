@@ -2,7 +2,7 @@ name: Main-Cuda
 
 on:
   push:
-    branches: [ master, develop** ]
+    branches: [ master, develop**, vb/ld_lib_path ]
     tags:
       - '*'
   pull_request:
@@ -44,6 +44,7 @@ jobs:
         - name: Setup (Linux)
           run: |
             echo "LD_LIBRARY_PATH=$CONDA_PREFIX/lib" >> $GITHUB_ENV
+          if: false
 
         # Fetching mkl from the anaconda channel instead of defaults gives us the MKL runtime dynamic libraries
         # as well (mkl_rt.<dll/so>), required during the runtime testing steps.
