@@ -2,7 +2,7 @@ name: Main-Cuda
 
 on:
   push:
-    branches: [ master, develop**, vb/ld_lib_path ]
+    branches: [ master, develop**, vb/ld_lib_path_cuda ]
     tags:
       - '*'
   pull_request:
