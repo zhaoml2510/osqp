@@ -47,6 +47,8 @@ void free_linsys_solver_qdldl(qdldl_solver *s) {
         if (s->AtoKKT)    c_free(s->AtoKKT);
         if (s->rhotoKKT)  c_free(s->rhotoKKT);
 
+        if (s->M)         c_free(s->M);
+
         // QDLDL workspace
         if (s->D)         c_free(s->D);
         if (s->etree)     c_free(s->etree);

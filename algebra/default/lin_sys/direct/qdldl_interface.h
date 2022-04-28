@@ -85,6 +85,8 @@ struct qdldl {
     QDLDL_int   *iwork;
     QDLDL_bool  *bwork;
     QDLDL_float *fwork;
+
+    csc *M;
 #endif
 
     /** @} */
