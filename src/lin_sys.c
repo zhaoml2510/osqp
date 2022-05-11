@@ -49,3 +49,22 @@ c_int init_linsys_solver(LinSysSolver      **s,
 #endif /* ifdef ALGEBRA_CUDA */
   }
 }
+
+
+c_int adjoint_derivative_linsys_solver(LinSysSolver      **s,
+                         const OSQPSettings *settings) {
+
+    switch (settings->linsys_solver) {
+
+#ifdef ALGEBRA_DEFAULT
+        default:
+            return adjoint_derivative_qdldl((qdldl_solver **)s);
+
+#else /* ifdef ALGEBRA_DEFAULT */
+
+        default:
+            c_eprint("Not implemented");
+            return 1;
+#endif
+    }
+}

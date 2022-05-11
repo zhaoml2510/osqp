@@ -234,6 +234,7 @@ c_int init_linsys_solver_qdldl(qdldl_solver      **sp,
     s->solve           = &solve_linsys_qdldl;
     s->update_settings = &update_settings_linsys_solver_qdldl;
     s->warm_start      = &warm_start_linsys_solver_qdldl;
+    s->adjoint_derivative = &adjoint_derivative_qdldl;
 
 
 #ifndef EMBEDDED
@@ -489,3 +490,8 @@ c_int update_linsys_solver_rho_vec_qdldl(qdldl_solver      *s,
 }
 
 #endif
+
+c_int adjoint_derivative_qdldl(qdldl_solver      **sp) {
+
+        return 0;
+}
