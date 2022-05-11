@@ -42,6 +42,23 @@ OSQPMatrix* OSQPMatrix_new_from_csc(const csc *A,
   }
 }
 
+// Make of a copy of a matrix
+OSQPMatrix* OSQPMatrix_copy_new(const OSQPMatrix *A) {
+    OSQPMatrix* out = c_malloc(sizeof(OSQPMatrix));
+    if(!out) return OSQP_NULL;
+
+    out->symmetry = A->symmetry;
+    out->csc = csc_copy(A);
+
+    if(!out->csc){
+        c_free(out);
+        return OSQP_NULL;
+    }
+    else{
+        return out;
+    }
+}
+
 // Convert an upper triangular matrix into a fully populated matrix
 OSQPMatrix* OSQPMatrix_triu_to_symm(const OSQPMatrix *A) {
 

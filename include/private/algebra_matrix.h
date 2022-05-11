@@ -32,6 +32,9 @@ c_int OSQPMatrix_is_eq(const OSQPMatrix *A,
 OSQPMatrix* OSQPMatrix_new_from_csc(const csc *A,
                                     c_int      is_triu);
 
+/* Return a copy of a matrix as output (Uses MALLOC) */
+OSQPMatrix* OSQPMatrix_copy_new(const OSQPMatrix *A);
+
 // Convert an upper triangular matrix into a fully populated matrix
 OSQPMatrix* OSQPMatrix_triu_to_symm(const OSQPMatrix *A);
 

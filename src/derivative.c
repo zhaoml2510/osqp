@@ -59,7 +59,8 @@ c_int adjoint_derivative(c_int m, c_int n, OSQPMatrix *P, OSQPVectorf *q, OSQPMa
 
     c_int A_ineq_l_nnz = OSQPMatrix_get_nz(A_ineq_l);
     c_int A_ineq_u_nnz = OSQPMatrix_get_nz(A_ineq_u);
-    OSQPMatrix *A_ineq = OSQPMatrix_vstack(A_ineq_l, A_ineq_u);
+    OSQPMatrix *G = OSQPMatrix_vstack(A_ineq_l, A_ineq_u);
+
     OSQPMatrix_free(A_ineq_l);
     OSQPMatrix_free(A_ineq_u);
 
@@ -71,21 +72,51 @@ c_int adjoint_derivative(c_int m, c_int n, OSQPMatrix *P, OSQPVectorf *q, OSQPMa
     OSQPVectorf *zero = OSQPVectorf_malloc(m);
     OSQPVectorf_set_scalar(zero, 0);
 
-    OSQPVectorf *_l_ineq = OSQPVectorf_subvector_byrows(y, A_ineq_l_i);
+    // --------- lambda
+    OSQPVectorf *_y_l_ineq = OSQPVectorf_subvector_byrows(y, A_ineq_l_i);
+    OSQPVectorf *y_l_ineq = OSQPVectorf_malloc(OSQPVectorf_length(_y_l_ineq));
+    OSQPVectorf_ew_min_vec(y_l_ineq, _y_l_ineq, zero);
+    OSQPVectorf_free(_y_l_ineq);
+    OSQPVectorf_mult_scalar(y_l_ineq, -1);
+
+    OSQPVectorf *_y_u_ineq = OSQPVectorf_subvector_byrows(y, A_ineq_u_i);
+    OSQPVectorf *y_u_ineq = OSQPVectorf_malloc(OSQPVectorf_length(_y_u_ineq));
+    OSQPVectorf_ew_max_vec(y_u_ineq, _y_u_ineq, zero);
+    OSQPVectorf_free(_y_u_ineq);
+
+    OSQPVectorf *lambda = OSQPVectorf_concat(y_l_ineq, y_u_ineq);
+
+    OSQPVectorf_free(y_l_ineq);
+    OSQPVectorf_free(y_u_ineq);
+    // ---------- lambda
+
+    // --------- h
+    OSQPVectorf *_l_ineq = OSQPVectorf_subvector_byrows(l, A_ineq_l_i);
     OSQPVectorf *l_ineq = OSQPVectorf_malloc(OSQPVectorf_length(_l_ineq));
     OSQPVectorf_ew_min_vec(l_ineq, _l_ineq, zero);
     OSQPVectorf_free(_l_ineq);
     OSQPVectorf_mult_scalar(l_ineq, -1);
 
-    OSQPVectorf *_u_ineq = OSQPVectorf_subvector_byrows(y, A_ineq_u_i);
+    OSQPVectorf *_u_ineq = OSQPVectorf_subvector_byrows(u, A_ineq_u_i);
     OSQPVectorf *u_ineq = OSQPVectorf_malloc(OSQPVectorf_length(_u_ineq));
     OSQPVectorf_ew_max_vec(u_ineq, _u_ineq, zero);
     OSQPVectorf_free(_u_ineq);
 
-    OSQPVectorf *lambda = OSQPVectorf_concat(l_ineq, u_ineq);
-    OSQPVectorf_free(zero);
+    OSQPVectorf *h = OSQPVectorf_concat(l_ineq, u_ineq);
+
     OSQPVectorf_free(l_ineq);
     OSQPVectorf_free(u_ineq);
+    // ---------- h
+
+    OSQPVectorf_free(zero);
+
+    // ---------- GDiagLambda
+    OSQPMatrix *GDiagLambda = OSQPMatrix_copy_new(G);
+    OSQPMatrix_rmult_diag(GDiagLambda, lambda);
+
+    // ---------- Slacks
+    OSQPVectorf* slacks = OSQPVectorf_copy_new(x);
+    OSQPMatrix_Axpy(G, x, slacks, 1, -1);
 
     OSQPMatrix *P_full = OSQPMatrix_triu_to_symm(P);
 
@@ -100,21 +131,22 @@ c_int adjoint_derivative(c_int m, c_int n, OSQPMatrix *P, OSQPVectorf *q, OSQPMa
                    A_eq_nnz +                    // Number of nonzeros in A_eq
                    A_ineq_l_nnz +                // Number of nonzeros in A_ineq_l'
                    A_ineq_u_nnz +                // Number of nonzeros in A_ineq_u'
-                   n_ineq +                      // Number of diagonal elements in lambda
+                   n_ineq +                      // Number of diagonal elements in slacks
                    A_eq_nnz;                     // Number of nonzeros in A_eq'
 
     c_int dim = 2 * (n + n_ineq + n_eq);
     csc *adj = csc_spalloc(dim, dim, nnzKKT, 1, 0);
     if (!adj) return OSQP_NULL;
-
-    //_adj_assemble_csc(adj, P_full, A_ineq_l, A_ineq_u, A_eq,);
+    //_adj_assemble_csc(adj, P_full, G, A_eq, GDiagLambda, slacks);
 
     // TODO: Make sure we're freeing everything we should!
-    OSQPMatrix_free(A_ineq);
+    OSQPMatrix_free(G);
     OSQPMatrix_free(A_eq);
     OSQPMatrix_free(P_full);
+    OSQPMatrix_free(GDiagLambda);
 
     OSQPVectorf_free(lambda);
+    OSQPVectorf_free(slacks);
 
     return 0;
 }
