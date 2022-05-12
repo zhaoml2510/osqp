@@ -47,7 +47,7 @@ void free_linsys_solver_qdldl(qdldl_solver *s) {
         if (s->AtoKKT)    c_free(s->AtoKKT);
         if (s->rhotoKKT)  c_free(s->rhotoKKT);
 
-        if (s->M)         c_free(s->M);
+        if (s->adj)         c_free(s->adj);
 
         // QDLDL workspace
         if (s->D)         c_free(s->D);
@@ -234,6 +234,7 @@ c_int init_linsys_solver_qdldl(qdldl_solver      **sp,
     s->solve           = &solve_linsys_qdldl;
     s->update_settings = &update_settings_linsys_solver_qdldl;
     s->warm_start      = &warm_start_linsys_solver_qdldl;
+    s->adjoint_derivative = &adjoint_derivative_qdldl;
 
 
 #ifndef EMBEDDED
@@ -486,6 +487,34 @@ c_int update_linsys_solver_rho_vec_qdldl(qdldl_solver      *s,
     return (QDLDL_factor(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
         s->L->p, s->L->i, s->L->x, s->D, s->Dinv, s->Lnz,
         s->etree, s->bwork, s->iwork, s->fwork) < 0);
+}
+
+c_int adjoint_derivative_qdldl(qdldl_solver *s, const OSQPMatrix *P_full) {
+    // Get maximum number of nonzero elements (only upper triangular part)
+    c_int P_full_nnz = OSQPMatrix_get_nz(P_full);
+//    c_int A_eq_nnz = OSQPMatrix_get_nz(A_eq);
+//
+//    c_int nnzKKT = n + n_ineq + n_eq +           // Number of diagonal elements in I
+//                   P_full_nnz +                  // Number of elements in P_full
+//                   A_ineq_l_nnz +                // Number of nonzeros in A_ineq_l
+//                   A_ineq_u_nnz +                // Number of nonzeros in A_ineq_u
+//                   A_eq_nnz +                    // Number of nonzeros in A_eq
+//                   A_ineq_l_nnz +                // Number of nonzeros in A_ineq_l'
+//                   A_ineq_u_nnz +                // Number of nonzeros in A_ineq_u'
+//                   n_ineq +                      // Number of diagonal elements in slacks
+//                   A_eq_nnz;                     // Number of nonzeros in A_eq'
+//
+//    c_int dim = 2 * (n + n_ineq + n_eq);
+//    csc *adj = csc_spalloc(dim, dim, nnzKKT, 1, 0);
+//    if (!adj) return OSQP_NULL;
+//    _adj_assemble_csc(adj, P_full, G, A_eq, GDiagLambda, slacks);
+
+    c_int dim = 120;
+    c_int nnzKKT = 999;
+    csc *adj = csc_spalloc(dim, dim, nnzKKT, 1, 0);
+    s->adj = adj;
+
+    return 0;
 }
 
 #endif

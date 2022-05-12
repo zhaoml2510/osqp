@@ -48,7 +48,7 @@ OSQPMatrix* OSQPMatrix_copy_new(const OSQPMatrix *A) {
     if(!out) return OSQP_NULL;
 
     out->symmetry = A->symmetry;
-    out->csc = csc_copy(A);
+    out->csc = csc_copy(A->csc);
 
     if(!out->csc){
         c_free(out);

@@ -29,5 +29,6 @@ c_int init_linsys_solver(LinSysSolver      **s,
                          c_float            *scaled_dual_res,
                          c_int               polishing);
 
+c_int adjoint_derivative_linsys_solver(LinSysSolver **s, const OSQPSettings *settings, const OSQPMatrix *P);
 
 #endif /* ifndef LIN_SYS_H */

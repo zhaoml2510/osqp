@@ -1164,31 +1164,10 @@ c_int osqp_adjoint_derivative(OSQPSolver *solver,
                                        c_float    *dy_l,
                                        const csc  *check) {
 
-    c_int m = solver->work->data->m;
-    c_int n = solver->work->data->n;
-
-    OSQPInfo*      info      = solver->info;
-    OSQPSettings*  settings  = solver->settings;
-    OSQPWorkspace* work      = solver->work;
-    OSQPSolution*  solution  = solver->solution;
-
     c_int status = adjoint_derivative(
-            m,
-            n,
-            solver->work->data->P,
-            solver->work->data->q,
-            solver->work->data->A,
-            solver->work->data->l,
-            solver->work->data->u,
-            solver->work->x,
-            solver->work->y
+            solver,
+            check
     );
 
-
-    OSQPMatrix *checkmat = OSQPMatrix_new_from_csc(check, 1);
-    OSQPMatrix *checkmat2 = OSQPMatrix_new_from_csc(check, 1);
-
-    c_int iseq = OSQPMatrix_is_eq(checkmat, checkmat2, 0.0001);
-
-    return iseq;
+    return status;
 }
