@@ -168,7 +168,7 @@ message(STATUS "Solver interrupt: ${OSQP_ENABLE_INTERRUPT}")
 
 if(OSQP_ALGEBRA_CUDA)
   # Some options have different defaults for the CUDA algebra
-  option(OSQP_USE_FLOAT "Use floats instead of doubles" ON)
+  option(OSQP_USE_FLOAT "Use floats instead of doubles" OFF)
   option(OSQP_USE_LONG "Use long integers (64bit) for indexing" OFF)
 else()
   option(OSQP_USE_FLOAT "Use floats instead of doubles" OFF)
